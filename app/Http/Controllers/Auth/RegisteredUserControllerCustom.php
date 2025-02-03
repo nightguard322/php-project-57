@@ -13,6 +13,11 @@ use Illuminate\Validation\Rules;
 
 class RegisteredUserControllerCustom extends RegisteredUserController
 {
+    public function create(): View
+    {
+        return view('auth.register');
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -33,7 +38,7 @@ class RegisteredUserControllerCustom extends RegisteredUserController
         event(new Registered($user));
 
         Auth::login($user);
-        flash('');
+        flash('error', 'Упс! Что-то пошло не так:');
         return redirect(route('dashboard', absolute: false));
     }
 }
