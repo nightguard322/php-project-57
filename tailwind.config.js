@@ -14,6 +14,11 @@ export default {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
+            colors: {
+                blue: {
+                    500: '#3B82F6', // Это стандартный синий цвет, вы можете изменить на свой
+                },
+            },
         },
     },
 

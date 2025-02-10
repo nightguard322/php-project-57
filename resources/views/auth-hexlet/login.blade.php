@@ -1,6 +1,7 @@
 <x-guest-layout>
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
+    <p class='text-xl text-center'>Менеджер задач</h1>
     <div>
         @if ($errors->get('email'))
             <p class='text-red-600'>Упс! Что-то пошло не так:</p>
@@ -22,7 +23,7 @@
 
         <!-- Password -->
         <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+            <x-input-label for="password" :value="__('Пароль')" />
 
             <x-text-input id="password" class="block mt-1 w-full"
                             type="password"
@@ -47,7 +48,7 @@
                 </a>
             @endif
 
-            <x-primary-button class="ms-3">
+            <x-primary-button class="ms-3 blue-500">
                 {{ __('Войти') }}
             </x-primary-button>
         </div>
