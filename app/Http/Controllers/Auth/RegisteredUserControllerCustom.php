@@ -13,11 +13,6 @@ use Illuminate\Validation\Rules;
 
 class RegisteredUserControllerCustom extends RegisteredUserController
 {
-    public function create(): View
-    {
-        return view('auth.register');
-    }
-
     /**
      * Display a listing of the resource.
      */
