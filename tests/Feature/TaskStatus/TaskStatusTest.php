@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\TaskStatus;
 
-use App\Models\TaskStatus as ModelsTaskStatus;
+use App\Models\TaskStatus;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -25,7 +25,7 @@ class TaskStatusTest extends TestCase
 
     public function testShow(): void
     {
-        $testTask = ModelsTaskStatus::factory()->create(['name' => 'test']);
+        $testTask = TaskStatus::factory()->create(['name' => 'test']);
         $response = $this->get("/task_statuses/{$testTask->id}");
         $response->assertStatus(200);
         $response->assertSee('test');
@@ -45,7 +45,7 @@ class TaskStatusTest extends TestCase
 
     public function testPatch(): void
     {
-        $testTask = ModelsTaskStatus::factory()->create();
+        $testTask = TaskStatus::factory()->create();
         $newTaskData = [
             'name' => 'test2'
         ];
@@ -58,7 +58,7 @@ class TaskStatusTest extends TestCase
 
     public function testDelete(): void
     {
-        $testTask = ModelsTaskStatus::factory()->create();
+        $testTask = TaskStatus::factory()->create();
         $response = $this->delete("/task_statuses/{$testTask->id}");
         
         $response->assertStatus(200);

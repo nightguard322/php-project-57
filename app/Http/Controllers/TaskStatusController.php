@@ -12,7 +12,8 @@ class TaskStatusController extends Controller
      */
     public function index()
     {
-        //
+        $statusList = TaskStatus::all();
+        return view('task-statuses.index', compact('statusList'));
     }
 
     /**
@@ -20,7 +21,8 @@ class TaskStatusController extends Controller
      */
     public function create()
     {
-        //
+        $taskStatus = new TaskStatus();
+        return view('task-statuses.create', compact('taskStatus'));
     }
 
     /**
@@ -28,15 +30,13 @@ class TaskStatusController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(TaskStatus $taskStatus)
-    {
-        //
+        $request->validate([
+            'name' => 'max:255' //найти правила
+        ]);
+        TaskStatus::create([
+            'name' => $request->name
+        ]);
+        return redirect()->route('task-statuses.index');
     }
 
     /**
@@ -44,7 +44,8 @@ class TaskStatusController extends Controller
      */
     public function edit(TaskStatus $taskStatus)
     {
-        //
+        $taskStatus = TaskStatus::findOrFail($taskStatus->id);
+        return view('task-statuses.edit', compact('taskStatus'));
     }
 
     /**
@@ -52,7 +53,12 @@ class TaskStatusController extends Controller
      */
     public function update(Request $request, TaskStatus $taskStatus)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'max:255' //найти правила
+        ]);
+        $taskStatus->fill($validated)->save();
+
+        return redirect()->route('task-statuses.index');
     }
 
     /**
@@ -60,6 +66,7 @@ class TaskStatusController extends Controller
      */
     public function destroy(TaskStatus $taskStatus)
     {
-        //
+        $taskStatus->delete();
+        return redirect()->route('task-statuses.index');
     }
 }

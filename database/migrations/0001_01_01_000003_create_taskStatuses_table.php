@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('taskStatuses', function (Blueprint $table) {
+        Schema::create('task_statuses', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->unsignedInteger('created_at');
+            $table->unsignedInteger('updated_at');
         });
     }
 
@@ -23,7 +24,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('taskStatuses');
+        Schema::dropIfExists('task_statuses');
 
     }
 };
