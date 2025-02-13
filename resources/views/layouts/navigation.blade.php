@@ -14,7 +14,7 @@
                 <x-nav-link :href="route('dashboard')">
                     {{ __('Задачи') }}
                 </x-nav-link>
-                <x-nav-link :href="route('dashboard')">
+                <x-nav-link :href="route('task-statuses.index')">
                     {{ __('Статусы') }}
                 </x-nav-link>
                 <x-nav-link :href="route('dashboard')">
