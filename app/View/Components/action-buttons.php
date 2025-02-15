@@ -6,17 +6,14 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class table-content extends Component
+class action-buttons extends Component
 {
-    private $headers;
-    private $data;
     /**
      * Create a new component instance.
      */
-    public function __construct(array $headers, Model $data)
+    public function __construct()
     {
-        $this->headers = $headers;
-        $this->data = $data;
+        //
     }
 
     /**
@@ -24,6 +21,6 @@ class table-content extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.table-content');
+        return view('components.action-buttons');
     }
 }

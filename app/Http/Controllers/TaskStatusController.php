@@ -13,6 +13,7 @@ class TaskStatusController extends Controller
     public function index()
     {
         $statusList = TaskStatus::all();
+        //Добавить экшны
         return view('task-statuses.index', compact('statusList'));
     }
 

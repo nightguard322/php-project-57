@@ -1,4 +1,4 @@
-@props(['headers','rows'])
+@props(['headers','rows', 'actions'])
 
 <table class="mt-4">
     <thead class="border-b-2 border-solid border-black text-left">
@@ -14,6 +14,11 @@
                 @foreach($row as $cell)
                     <td>{{ $cell }}</td>
                 @endforeach
+                @Auth
+                    <td>
+                        
+                    </td>
+                @endAuth
             </tr>
         @endforeach
     </tbody>
