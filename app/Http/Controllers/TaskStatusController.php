@@ -12,9 +12,8 @@ class TaskStatusController extends Controller
      */
     public function index()
     {
-        $statusList = TaskStatus::all();
-        //Добавить экшны
-        return view('task-statuses.index', compact('statusList'));
+        $statuses = TaskStatus::all();
+        return view('task-statuses.index', compact('statuses'));
     }
 
     /**
@@ -43,9 +42,9 @@ class TaskStatusController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(TaskStatus $taskStatus)
+    public function edit(int $id)
     {
-        $taskStatus = TaskStatus::findOrFail($taskStatus->id);
+        $taskStatus = TaskStatus::findOrFail($id);
         return view('task-statuses.edit', compact('taskStatus'));
     }
 
@@ -57,7 +56,7 @@ class TaskStatusController extends Controller
         $validated = $request->validate([
             'name' => 'max:255' //найти правила
         ]);
-        $taskStatus->fill($validated)->save();
+        $taskStatus->update($validated);
 
         return redirect()->route('task-statuses.index');
     }
@@ -65,8 +64,9 @@ class TaskStatusController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(TaskStatus $taskStatus)
+    public function destroy(int $id)
     {
+        $taskStatus = TaskStatus::findOrFail($id);
         $taskStatus->delete();
         return redirect()->route('task-statuses.index');
     }

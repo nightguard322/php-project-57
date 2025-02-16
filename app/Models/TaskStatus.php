@@ -8,4 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class TaskStatus extends Model
 {
     use HasFactory;
+
+    protected $casts = [
+        'created_at' => 'datetime:d.m.Y',
+    ];
+    protected $fillable = ['name'];
+    protected $hidden = ['updated_at'];
 }

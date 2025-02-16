@@ -5,8 +5,9 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Auth;
 
-class CustomMiddleware
+class CheckAuth
 {
     /**
      * Handle an incoming request.
@@ -15,6 +16,9 @@ class CustomMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
+        if (!Auth::check()) {
+            abort(Response::HTTP_FORBIDDEN, '403 Forbidden');
+        }
         return $next($request);
     }
 }

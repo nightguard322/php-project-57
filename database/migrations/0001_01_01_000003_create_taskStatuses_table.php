@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('task_statuses', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->unsignedInteger('created_at');
-            $table->unsignedInteger('updated_at');
+            $table->date('created_at');
+            $table->date('updated_at');
         });
     }
 

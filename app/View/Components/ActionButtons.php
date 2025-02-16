@@ -6,14 +6,15 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class action-buttons extends Component
+class ActionButtons extends Component
 {
+    private $id;
+    private $actions;
     /**
      * Create a new component instance.
      */
     public function __construct()
     {
-        //
     }
 
     /**
