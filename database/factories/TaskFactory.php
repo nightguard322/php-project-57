@@ -2,16 +2,14 @@
 
 namespace Database\Factories;
 
-use App\Models\TaskStatus;
 use Illuminate\Database\Eloquent\Factories\Factory;
-
+use App\Models\Task;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\TaskStatus>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Task>
  */
-class TaskStatusFactory extends Factory
+class TaskFactory extends Factory
 {
-    protected $model = TaskStatus::class;
     /**
      * Define the model's default state.
      *
@@ -19,6 +17,6 @@ class TaskStatusFactory extends Factory
      */
     public function definition(): array
     {
-        return []
+        return [];
     }
 }

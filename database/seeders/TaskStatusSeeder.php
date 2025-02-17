@@ -3,8 +3,10 @@
 namespace Database\Seeders;
 
 use App\Models\TaskStatus;
+use Database\Factories\TaskStatusFactory;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Carbon\Carbon;
 
 class TaskStatusSeeder extends Seeder
 {
@@ -13,15 +15,30 @@ class TaskStatusSeeder extends Seeder
      */
     public function run(): void
     {
-        $statusList = [
-            ['name' => 'новая'],
-            ['name' => 'завершена'],
-            ['name' => 'выполняется'],
-            ['name' => 'в архиве'],
+
+        $data = [
+            [
+                'name' => 'новая',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+            ],
+            [
+                'name' => 'завершена',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+            ],
+            [
+                'name' => 'выполняется',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+            ],
+            [
+                'name' => 'в архиве',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+            ]
         ];
-        foreach ($statusList as $status) {
-            TaskStatus::create($status);
-        }
-        
+
+        TaskStatus::insert($data);
     }
 }
