@@ -22,6 +22,8 @@ class TaskController extends Controller
     public function create()
     {
         $task = new Task();
+        $statusList = $task->status->all();
+        $taskAssignees = $task->assignee()->all()->whereNot('id', $task->)
         return view('tasks.create', compact('task'));
     }
 
