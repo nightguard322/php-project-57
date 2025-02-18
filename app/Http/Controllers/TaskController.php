@@ -12,7 +12,8 @@ class TaskController extends Controller
      */
     public function index()
     {
-        //
+        $tasks = Task::all();
+        return view('tasks.index', compact('tasks'));
     }
 
     /**
@@ -20,7 +21,8 @@ class TaskController extends Controller
      */
     public function create()
     {
-        //
+        $task = new Task();
+        return view('tasks.create', compact('task'));
     }
 
     /**
@@ -28,7 +30,17 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate(
+            [
+                'name' => 'required|string|max:255',
+                'description' => 'nullable|max:255',
+                'status_id' => 'required|exists:task_statuses,id',
+                'created_by_id' => 'required|exists:users,id',
+                'assigned_to_id' => 'nullable|exists:user,id'
+            ]
+        );
+        $newTaskId = Task::create($validated)->id();
+        return redirect()->route('task.show', $newTaskId);
     }
 
     /**
@@ -36,7 +48,7 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-        //
+        return view('tasks.show', compact('task'));
     }
 
     /**
@@ -44,7 +56,7 @@ class TaskController extends Controller
      */
     public function edit(Task $task)
     {
-        //
+        return view('tasks.edit', compact('task'));
     }
 
     /**
@@ -52,7 +64,17 @@ class TaskController extends Controller
      */
     public function update(Request $request, Task $task)
     {
-        //
+        $validated = $request->validate(
+            [
+            'name' => 'required|string|max:255',
+            'description' => 'max:255',
+            'status_id' => 'required|exists:task_statuses,id',
+            'created_by_id' => 'required|exists:users,id',
+            'assigned_to_id' => 'nullable|exists:user,id'
+            ]
+        );
+        $task->update($validated);
+        return redirect()->route('task.show', $task);
     }
 
     /**
@@ -60,6 +82,7 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
-        //
+        $task->delete();
+        return redirect()->route('task.index');
     }
 }

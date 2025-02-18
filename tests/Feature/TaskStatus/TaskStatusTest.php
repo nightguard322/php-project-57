@@ -31,31 +31,39 @@ class TaskStatusTest extends TestCase
         $response = $this->post(route('task-statuses.store'), $status);
         
         $response->assertStatus(302);
-        $response->assertRedirect('/task-statuses');
+        $response->assertRedirect(route('task-statuses.index'));
         $this->assertDatabaseHas('task_statuses', ['name' => 'test']);
     }
 
     public function testPatch(): void
     {
-        $testTask = TaskStatus::factory()->create();
+        $this->seed();
+        $testTask = TaskStatus::first();
         $newTaskData = [
             'name' => 'test2'
         ];
-        $response = $this->patch(route('task-statuses.update', $testTask->id), $newTaskData);
+        $response = $this->patch(
+            route('task-statuses.update', $testTask),
+            $newTaskData
+        );
         
         $response->assertStatus(302);
-        $response->assertRedirect('/task-statuses');
+        $response->assertRedirect(route('task-statuses.index'));
         $this->assertDatabaseHas('task_statuses', ['name' => 'test2']);
     }
 
     public function testDelete(): void
     {
-        $testTask = TaskStatus::factory()->create();
-        $response = $this->delete("/task-statuses/{$testTask->id}");
-        $response->assertStatus(302);
+        $this->seed();
+        $testStatus = TaskStatus::first();
+        $response = $this->delete(route('task-statuses.destroy', $testStatus));
+        $response->assertStatus(500);
+
+        $testStatus->tasks()->delete();
+        $response = $this->delete(route('task-statuses.destroy', $testStatus));
         $response->assertRedirect('/task-statuses');
-        $this->assertDatabaseMissing('task_statuses', [
-            'name' => $testTask->name,
-        ]);
+        $this->assertDatabaseMissing(
+            'task_statuses', ['name' => $testStatus->name,]
+        );
     }
 }
