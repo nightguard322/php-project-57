@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Task;
+use App\Models\TaskStatus;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Resources\TaskCollection;
 
 class TaskController extends Controller
 {
@@ -12,7 +16,8 @@ class TaskController extends Controller
      */
     public function index()
     {
-        $tasks = Task::all();
+        $tasks = Task::with('status', 'createdBy', 'assignedTo')->get();
+        $prepared = new TaskCollection($tasks);
         return view('tasks.index', compact('tasks'));
     }
 
@@ -21,10 +26,12 @@ class TaskController extends Controller
      */
     public function create()
     {
-        $task = new Task();
-        $statusList = $task->status->all();
-        $taskAssignees = $task->assignee()->all()->whereNot('id', $task->)
-        return view('tasks.create', compact('task'));
+        $taskData = [
+                'task' => new Task(),
+                'statuses' => TaskStatus::all(),
+                'users' => User::all()
+                ];
+        return view('tasks.create', compact('taskData', 'statuses', 'users'));
     }
 
     /**
@@ -37,12 +44,12 @@ class TaskController extends Controller
                 'name' => 'required|string|max:255',
                 'description' => 'nullable|max:255',
                 'status_id' => 'required|exists:task_statuses,id',
-                'created_by_id' => 'required|exists:users,id',
                 'assigned_to_id' => 'nullable|exists:user,id'
             ]
         );
-        $newTaskId = Task::create($validated)->id();
-        return redirect()->route('task.show', $newTaskId);
+        $validated['created_by_id'] = Auth::id();
+        $task = Task::create($validated);
+        return redirect()->route('task.show', $task->id);
     }
 
     /**
@@ -71,12 +78,11 @@ class TaskController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'max:255',
             'status_id' => 'required|exists:task_statuses,id',
-            'created_by_id' => 'required|exists:users,id',
             'assigned_to_id' => 'nullable|exists:user,id'
             ]
         );
         $task->update($validated);
-        return redirect()->route('task.show', $task);
+        return redirect()->route('task.show', $task->id);
     }
 
     /**

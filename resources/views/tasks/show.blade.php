@@ -5,7 +5,7 @@
     <div>
         <p>Имя: {{ $task->name }}</p>
         <p>Статус: {{ $task->status->name }}</p>
-        <p>Имя: {{ $task->description }}</p>
+        <p>Описание: {{ $task->description }}</p>
         <p>Метки:</p>
         <div>Тут метки</div>
     </div>
