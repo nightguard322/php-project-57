@@ -14,8 +14,8 @@
             @endauth
             <x-table-content 
                 :headers="['ID', 'Статус', 'Имя', 'Автор', 'Исполнитель', 'Дата создания']"
-                :rows="$tasks->toArray()"
-                :deleteAble="false"
+                :rows="$tasks"
+                :options="['deleteAble' => false, 'model' => 'tasks']" 
             />
     </div>
 </x-app-layout>

@@ -1,4 +1,4 @@
-@props(['headers','rows','deleteAble'])
+@props(['headers','rows','options'])
 
 <table class="mt-4">
     <thead class="border-b-2 border-solid border-black text-left">
@@ -20,7 +20,7 @@
                 @endforeach
                 @Auth
                     <td>
-                        <x-action-buttons :deleteAble="$deleteAble" :id="$row['id']"/>
+                        <x-action-buttons :options="array_merge($options, ['id' => $row['id']])"/>
                     </td>
                 @endAuth
             </tr>

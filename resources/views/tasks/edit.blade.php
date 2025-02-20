@@ -1,6 +1,6 @@
 <x-app-layout>
-    {{ html()->modelForm($taskData['task'], 'PATCH', route(tasks.update))->open() }}
-    @include('partials.form');
+    {{ html()->modelForm($task, 'PATCH', route('tasks.update', $task))->open() }}
+    @include('tasks.partials.form');
     {{ html()->submit('Обновить') }}
-    {{ html()->closeForm() }}
+    {{ html()->form()->close() }}
 </x-app-layout>

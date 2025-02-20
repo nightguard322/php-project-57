@@ -20,7 +20,7 @@ class TaskResource extends JsonResource
             'Имя' => $this->name,
             'Автор' => $this->createdBy->name,
             'Исполнитель' => $this->assignedTo->name,
-            'Дата создания' => $this->created_at
+            'Дата создания' => $this->created_at->format('d-m-Y')
         ];
     }
 }

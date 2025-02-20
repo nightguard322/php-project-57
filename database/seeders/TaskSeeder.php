@@ -7,6 +7,7 @@ use Illuminate\Database\Seeder;
 use App\Models\Task;
 use App\Models\TaskStatus;
 use App\Models\User;
+use Carbon\Carbon;
 
 class TaskSeeder extends Seeder
 {
@@ -51,7 +52,9 @@ class TaskSeeder extends Seeder
                     [
                     'status_id' => $statusTaskIds->random(), 
                     'created_by_id' => $creatorIds->random(),
-                    'assigned_to_id' => $creatorIds->random()
+                    'assigned_to_id' => $creatorIds->random(),
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now()->format('d-m-Y')
                     ]
                 ),
             $data

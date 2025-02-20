@@ -22,7 +22,8 @@ return new class extends Migration
             $table->foreignId('assigned_to_id')
                 ->constrained('users')
                 ->name('assigned_to');
-            $table->timestamps();
+            $table->date('created_at');
+            $table->date('updated_at');
         });
     }
 

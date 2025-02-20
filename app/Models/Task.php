@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Task extends Model
 {
+    protected $casts = [
+        'created_at' => 'datetime:d.m.Y',
+    ];
+    
     public function createdBy()
     {
         return $this->belongsTo(User::class, 'created_by_id');

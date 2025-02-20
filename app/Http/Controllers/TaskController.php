@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\TaskCollection;
+use App\Http\Resources\TaskResource;
 
 class TaskController extends Controller
 {
@@ -17,8 +18,8 @@ class TaskController extends Controller
     public function index()
     {
         $tasks = Task::with('status', 'createdBy', 'assignedTo')->get();
-        $prepared = new TaskCollection($tasks);
-        return view('tasks.index', compact('tasks'));
+        $taskCollection = new TaskCollection($tasks);
+        return view('tasks.index', ['tasks' => $taskCollection->resolve()]);
     }
 
     /**
@@ -65,7 +66,8 @@ class TaskController extends Controller
      */
     public function edit(Task $task)
     {
-        return view('tasks.edit', compact('task'));
+        $task = new TaskResource($task);
+        return view('tasks.index', ['task' => $task->resolve()]);
     }
 
     /**

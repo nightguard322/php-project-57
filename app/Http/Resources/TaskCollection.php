@@ -8,12 +8,12 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 class TaskCollection extends ResourceCollection
 {
     /**
-     * Transform the resource into an array.
+     * Transform the resource collection into an array.
      *
-     * @return array<string, mixed>
+     * @return array<int|string, mixed>
      */
-    public function toArray(Request $request): array
+    public function toArray($request)
     {
-        return parent::toArray($request);
+        return TaskResource::collection($this->collection);
     }
 }
