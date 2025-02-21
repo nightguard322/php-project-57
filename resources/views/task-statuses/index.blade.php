@@ -6,7 +6,9 @@
                     <x-blue-button :href="route('task-statuses.create')">Создать статус</x-blue-button>
                 </div>
             @endAuth
-            <x-table-content :headers="['ID', 'Имя', 'Дата создания']" :rows="$statuses->toArray()" :deleteAble="true"/>
+            <x-table-child :headers="['ID', 'Имя', 'Дата создания']" 
+            :rows="$statuses->toArray()" 
+            model="task-statuses"/>
         </div>
     </x-app-layout>
 

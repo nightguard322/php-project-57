@@ -12,10 +12,10 @@
                     <x-blue-button :href="route('tasks.create')">Создать задачу</x-blue-button>
                 </div>
             @endauth
-            <x-table-content 
+            <x-table-main 
                 :headers="['ID', 'Статус', 'Имя', 'Автор', 'Исполнитель', 'Дата создания']"
                 :rows="$tasks"
-                :options="['deleteAble' => false, 'model' => 'tasks']" 
+                model="tasks"
             />
     </div>
 </x-app-layout>

@@ -66,8 +66,9 @@ class TaskController extends Controller
      */
     public function edit(Task $task)
     {
-        $task = new TaskResource($task);
-        return view('tasks.index', ['task' => $task->resolve()]);
+        $taskResource = new TaskResource($task);
+        $taskData = $taskResource->resolve();
+        return view('tasks.edit', [compact('task', 'taskData')]);
     }
 
     /**
@@ -84,7 +85,7 @@ class TaskController extends Controller
             ]
         );
         $task->update($validated);
-        return redirect()->route('task.show', $task->id);
+        return redirect()->route('task.show', $task);
     }
 
     /**

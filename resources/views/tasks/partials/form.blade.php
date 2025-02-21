@@ -9,7 +9,6 @@
 <div>
     {{ html()->label('Статус', 'status') }}
     {{ html()->select('status_id', [$task['statuses']]) }}
-    @php dd($task); @endphp
 </div>
 <div>
     {{ html()->label('Исполнитель', 'status') }}
