@@ -17,9 +17,10 @@ class TaskController extends Controller
      */
     public function index()
     {
-        $tasks = Task::with('status', 'createdBy', 'assignedTo')->get();
-        $taskCollection = new TaskCollection($tasks);
-        return view('tasks.index', ['tasks' => $taskCollection->resolve()]);
+        $data = Task::with('status', 'createdBy', 'assignedTo')->get();
+        $taskCollection = new TaskCollection($data);
+        $tasks = $taskCollection->resolve();
+        return view('tasks.index', compact('tasks'));
     }
 
     /**
@@ -27,11 +28,12 @@ class TaskController extends Controller
      */
     public function create()
     {
-        $taskData = [
+        $taskData = 
+            [
                 'task' => new Task(),
                 'statuses' => TaskStatus::all(),
                 'users' => User::all()
-                ];
+            ];
         return view('tasks.create', compact('taskData', 'statuses', 'users'));
     }
 
@@ -68,7 +70,7 @@ class TaskController extends Controller
     {
         $taskResource = new TaskResource($task);
         $taskData = $taskResource->resolve();
-        return view('tasks.edit', [compact('task', 'taskData')]);
+        return view('tasks.edit', ['task' => $task, 'taskData' => $taskData]);
     }
 
     /**

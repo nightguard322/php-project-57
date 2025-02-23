@@ -1,19 +1,28 @@
-@props(['headers','rows', 'model'])
+@props(['data'])
 
 <table class="mt-4">
-    @include('partials.header');
+    <thead class="border-b-2 border-solid border-black text-left">
+        <tr>
+            @foreach($headers as $header)
+                <th>{{ $header }}</th>
+            @endforeach
+            @Auth
+                <th>Действия</th>
+            @endAuth
+        </tr>
+    </thead>
     <tbody>
-        @foreach($rows as $row)
+        @foreach($data['data'] as $row)
             <tr>
-                @foreach($row as $cell)
-                    @if($cell === $row['Имя'])
-                        <td><a href="{{ route("{$model}.edit", $row['id']) }}">{{ $cell }}</a></td>
+                @foreach($row as $key => $cell)
+                    @if ($key === 'link')
+                        continue;
                     @endif
-                    <td>{{ $cell }}</td>
+                    { $slot }
                 @endforeach
                 @Auth
                     <td>
-                        <a class="text-blue-600 hover:text-blue-900" href="{{ route("{$model}.edit", $row['id']) }}">Изменить</a>
+                        <a class="text-blue-600 hover:text-blue-900" href="{{ $data['link'] }}">Изменить</a>
                     </td>
                 @endAuth
             </tr>

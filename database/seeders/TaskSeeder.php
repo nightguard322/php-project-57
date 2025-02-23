@@ -54,7 +54,7 @@ class TaskSeeder extends Seeder
                     'created_by_id' => $creatorIds->random(),
                     'assigned_to_id' => $creatorIds->random(),
                     'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now()->format('d-m-Y')
+                    'updated_at' => Carbon::now()
                     ]
                 ),
             $data
