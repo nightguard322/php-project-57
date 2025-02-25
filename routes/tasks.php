@@ -5,7 +5,7 @@ use App\Http\Controllers\TaskController;
 
 Route::get('/tasks', [TaskController::class, 'index'])
     ->name('tasks.index');
-Route::get('/tasks/create', [TaskController::class, 'show'])
+Route::get('/tasks/show', [TaskController::class, 'show'])
     ->name('tasks.show');
 Route::get('/tasks/create', [TaskController::class, 'create'])
     ->name('tasks.create');

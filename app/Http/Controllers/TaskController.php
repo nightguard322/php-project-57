@@ -7,8 +7,8 @@ use App\Models\TaskStatus;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Resources\TaskCollection;
 use App\Http\Resources\TaskResource;
+use App\Presenter\TaskPresenter;
 
 class TaskController extends Controller
 {
@@ -18,9 +18,9 @@ class TaskController extends Controller
     public function index()
     {
         $data = Task::with('status', 'createdBy', 'assignedTo')->get();
-        $taskCollection = new TaskCollection($data);
-        $tasks = $taskCollection->resolve();
-        return view('tasks.index', compact('tasks'));
+        $tasks = new TaskPresenter($data);
+        $links = $tasks->getLinks();
+        return view('tasks.index', compact('links', 'tasks'));
     }
 
     /**

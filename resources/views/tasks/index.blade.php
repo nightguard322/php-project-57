@@ -5,15 +5,14 @@
             <a href="#">Автор</a>
             <a href="#">Исполнтиель</a>
             <div>
-                <x-blue-button :href="route('tasks.create')">Применить</x-blue-button>
+                <x-blue-button :href="$tasks['meta']['createRoute']">Применить</x-blue-button>
             </div>
             @auth
                 <div>
-                    <x-blue-button :href="route('tasks.create')">Создать задачу</x-blue-button>
+                    <x-blue-button :href="$tasks['meta']['createRoute']">Создать задачу</x-blue-button>
                 </div>
             @endauth
-            <x-table-main
-                :tasks="$tasks"
-            />
+            @php dd($tasks); @endphp
+            <x-table-main :entities="$tasks" :links="$links"/>
     </div>
 </x-app-layout>
