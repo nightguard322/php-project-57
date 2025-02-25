@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Presenter;
+namespace App\Presenters;
 
 class TaskPresenter extends BasePresenter
 {
@@ -21,8 +21,7 @@ class TaskPresenter extends BasePresenter
     {
         return array_merge(
             ['data' => parent::prepareCollection(
-                fn($element) => 
-                    [
+                fn($element) => [
                         'id' => $element->id,
                         'status' => $element->status->name,
                         'name' =>  $element->name,
@@ -45,12 +44,10 @@ class TaskPresenter extends BasePresenter
 
     public function prepareMeta(array $headers): array
     {
-        return [
-            array_merge(
-                parent::prepareMeta($headers),
-                ['meta' => ['withLink' => 'name']]
-            )
-        ];
+        return array_merge_recursive(
+            parent::prepareMeta($headers),
+            ['meta' => ['withLink' => 'name']
+        ]);
     }
 
 }

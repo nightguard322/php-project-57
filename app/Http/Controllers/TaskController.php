@@ -8,7 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\TaskResource;
-use App\Presenter\TaskPresenter;
+use App\Presenters\TaskPresenter;
 
 class TaskController extends Controller
 {
@@ -19,8 +19,10 @@ class TaskController extends Controller
     {
         $data = Task::with('status', 'createdBy', 'assignedTo')->get();
         $tasks = new TaskPresenter($data);
-        $links = $tasks->getLinks();
-        return view('tasks.index', compact('links', 'tasks'));
+        return view('tasks.index', [
+            'entities' => $tasks->presentCollection($tasks),
+            'links' => $tasks->getLinks()
+        ]);
     }
 
     /**
@@ -52,7 +54,7 @@ class TaskController extends Controller
         );
         $validated['created_by_id'] = Auth::id();
         $task = Task::create($validated);
-        return redirect()->route('task.show', $task->id);
+        return redirect()->route('tasks.show', $task->id);
     }
 
     /**
@@ -68,9 +70,12 @@ class TaskController extends Controller
      */
     public function edit(Task $task)
     {
-        $taskResource = new TaskResource($task);
-        $taskData = $taskResource->resolve();
-        return view('tasks.edit', ['task' => $task, 'taskData' => $taskData]);
+        $task = new TaskPresenter($task);
+        return view('tasks.edit', [
+            'task' => $task->present($task),
+            'links' => $task->getLinks(),
+            'users' => User::all()->pluck('name')->toArray()
+        ]);
     }
 
     /**
@@ -78,16 +83,14 @@ class TaskController extends Controller
      */
     public function update(Request $request, Task $task)
     {
-        $validated = $request->validate(
-            [
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'max:255',
-            'status_id' => 'required|exists:task_statuses,id',
-            'assigned_to_id' => 'nullable|exists:user,id'
-            ]
-        );
+            'status_id' => 'required',
+            'assigned_to_id' => 'nullable'
+            ]);
         $task->update($validated);
-        return redirect()->route('task.show', $task);
+        return redirect()->route('tasks.show', $task);
     }
 
     /**
@@ -96,6 +99,6 @@ class TaskController extends Controller
     public function destroy(Task $task)
     {
         $task->delete();
-        return redirect()->route('task.index');
+        return redirect()->route('tasks.index');
     }
 }

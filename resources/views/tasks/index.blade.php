@@ -4,15 +4,13 @@
             <a href="#">Статус</a>
             <a href="#">Автор</a>
             <a href="#">Исполнтиель</a>
-            <div>
-                <x-blue-button :href="$tasks['meta']['createRoute']">Применить</x-blue-button>
+                <x-blue-button :href="$entities['meta']['createRoute']">Применить</x-blue-button>
             </div>
             @auth
                 <div>
-                    <x-blue-button :href="$tasks['meta']['createRoute']">Создать задачу</x-blue-button>
+                    <x-blue-button :href="$entities['meta']['createRoute']">Создать задачу</x-blue-button>
                 </div>
             @endauth
-            @php dd($tasks); @endphp
-            <x-table-main :entities="$tasks" :links="$links"/>
+            <x-table-main :entities="$entities" :links="$links"/>
     </div>
 </x-app-layout>

@@ -8,15 +8,15 @@
 </div>
 <div>
     {{ html()->label('Статус', 'status') }}
-    {{ html()->select('status_id', [$taskData['status']]) }}
+    {{ html()->select('status_id', [$task['status']]) }}
+</div>
+<div>
+    {{ html()->label('Создатель', 'status') }}
+    {{ html()->select('status_id', [$users]) }}
 </div>
 <div>
     {{ html()->label('Исполнитель', 'status') }}
-    {{ html()->select('status_id', [$taskData['users']]) }}
-</div>
-<div>
-    {{ html()->label('Исполнитель', 'status') }}
-    {{ html()->select('status_id', [$taskData['users']]) }}
+    {{ html()->select('status_id', [$users]) }}
 </div>
 
 

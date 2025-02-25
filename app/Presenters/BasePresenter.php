@@ -1,20 +1,28 @@
 <?php
 
-namespace App\Presenter;
+namespace App\Presenters;
 
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Collection;
+
 
 abstract class BasePresenter
 {
 
     protected $model;
+    protected $collection;
     protected $className;
     protected $actions = ['edit', 'update', 'destroy', 'show'];
 
-    public function __construct($model)
+    public function __construct(mixed $entity)
     {
-        $this->model = $model;
-        $this->className = $this->getClassName();
+        if ($entity instanceof Collection) {
+            $this->collection = $entity;
+        } else {
+            $this->model = $entity;
+        }
+        
+        $this->className = strtolower($this->getClassName());
     }
 
     abstract public function present();
@@ -31,7 +39,7 @@ abstract class BasePresenter
         return [
             'meta' => [
                 'headers' => $this->prepareHeaders($headers),
-                'createRoute' => route("{$this->className}.create")
+                'createRoute' => route("{$this->className}s.create")
             ]
         ];
     }
@@ -43,12 +51,11 @@ abstract class BasePresenter
      */
     protected function prepareHeaders($headers): array
     {
-        return $headers->
-            collect()->
-            mapWithKeys(
-                fn($header) => [$header => __("{$this->className}.{$header}")]
-            )->
-            toArray();
+        return collect($headers)
+            ->mapWithKeys(
+                fn($header) => [$header => __("{$this->className}s.{$header}")]
+            )
+            ->toArray();
     }
 
     /**
@@ -61,7 +68,7 @@ abstract class BasePresenter
         return Str::replace(
             'Presenter',
             '',
-            Str::basename(self::class)
+            class_basename(static::class)
         );
     }
     /**
@@ -72,11 +79,12 @@ abstract class BasePresenter
 
     public function getLinks(): array
     {
-        return $this->collection->map(function ($element) {
-            return [
-                $element->id => $this->getDefaultRoutes($element)
-            ];
-        });
+        if ($this->collection) {
+            return $this->collection->mapWithKeys(function ($element) {
+                return [$element->id => $this->getDefaultRoutes($element)];
+            })->toArray();
+        }
+        return $this->getDefaultRoutes($this->model);
     }
 
     /**
@@ -95,8 +103,6 @@ abstract class BasePresenter
 
     protected function prepareCollection(callable $fn)
     {
-        return $this->collection
-            ->map($fn)
-            ->toArray();
+        return $this->collection->map($fn)->toArray();
     }
 }
