@@ -1,5 +1,5 @@
 <x-app-layout>
-    {{ html()->modelForm($taskData['task'], 'POST', route(tasks.store))->open() }}
+    {{ html()->modelForm($taskData['task'], 'POST', route('tasks.store'))->open() }}
     @include('partials.form');
     {{ html()->submit('Создать') }}
     {{ html()->closeForm() }}

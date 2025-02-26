@@ -17,11 +17,11 @@ class TaskController extends Controller
      */
     public function index()
     {
-        $data = Task::with('status', 'createdBy', 'assignedTo')->get();
-        $tasks = new TaskPresenter($data);
+        $task = Task::with('status', 'createdBy', 'assignedTo')->get();
+        $tasks = new TaskPresenter($task);
         return view('tasks.index', [
             'entities' => $tasks->presentCollection($tasks),
-            'links' => $tasks->getLinks()
+            'links' => $tasks->getLinks($task)
         ]);
     }
 
@@ -30,13 +30,10 @@ class TaskController extends Controller
      */
     public function create()
     {
-        $taskData = 
-            [
-                'task' => new Task(),
-                'statuses' => TaskStatus::all(),
-                'users' => User::all()
-            ];
-        return view('tasks.create', compact('taskData', 'statuses', 'users'));
+        $task = new Task();
+        $relatedModels = $task->prepareParentData(['User', 'TaskStatus']);
+        // $links = $task->getLinks($task);
+        return view('tasks.create', compact('task', 'relatedModels', 'links'));
     }
 
     /**
@@ -70,7 +67,7 @@ class TaskController extends Controller
      */
     public function edit(Task $task)
     {
-        $task = (new TaskPresenter($task));
+        $task = new TaskPresenter($task);
         $preparedTask = $task->present($task);
         $preparedData = $task->prepareParentData(
             $preparedTask,
@@ -79,20 +76,8 @@ class TaskController extends Controller
         );
         return view('tasks.edit', array_merge([
             'task' => $preparedTask,
-            'links' => $task->getLinks()
+            'links' => $task->getLinks($task)
         ], $preparedData));
-       
-
-
-        // $users = User::all()->pluck('name', 'id')->toArray();
-        // $statuses = TaskStatus::all()->pluck('name','id')->toArray();
-        // return view('tasks.edit', [
-        //     'task' => $preparedTask,
-        //     'links' => $task->getLinks(),
-        //     'users' => [
-        //         'all' => $users,
-        //         'current' => array_search($preparedTask['status'], $statuses)]
-        //     ]);
     }
 
     /**

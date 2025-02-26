@@ -7,32 +7,25 @@ use App\Models\User;
 class TaskPresenter extends BasePresenter
 {
     
-
-    public function present()
+    public function present($model)
     {
         return 
         [
-            'id' => $this->model->id,
-            'status' => $this->model->status->name,
-            'name' =>  $this->model->name,
-            'createdBy' => $this->model->createdBy->name,
-            'assignedTo' => $this->model->assignedTo->name,
-            'createdAt' => $this->model->created_at->format('d-m-Y'),
+            'id' => $model->id,
+            'status' => $model->status->name,
+            'name' =>  $model->name,
+            'createdBy' => $model->createdBy->name,
+            'assignedTo' => $model->assignedTo->name,
+            'createdAt' => $model->created_at->format('d-m-Y'),
         ];
     }
 
-    public function presentCollection()
+    public function presentCollection($collection)
     {
         return array_merge(
             ['data' => parent::prepareCollection(
-                fn($element) => [
-                        'id' => $element->id,
-                        'status' => $element->status->name,
-                        'name' =>  $element->name,
-                        'createdBy' => $element->createdBy->name,
-                        'assignedTo' => $element->assignedTo->name,
-                        'createdAt' => $element->created_at->format('d-m-Y'),
-                    ]
+                $collection,
+                fn($element) => $this->present($element)
                 )
             ],
             $this->prepareMeta([
@@ -56,30 +49,30 @@ class TaskPresenter extends BasePresenter
     /**
      * @prepare parent models to view with an array
      *
-     * @param [type] $presented
      * @param array $parents
-     * @param string $field
-     * @return void
+     * @return array
      */
-    public function prepareParentData(array $presented, array $parents, array $fields): array
+    public function prepareParentData(array $parents): array
     {
         return collect($parents)
             ->mapWithKeys(
-                fn($parent, $alias) => [
-                    $parent => [
-                        'all' => $this->getParentData($parent, $fields),
-                        'current' => array_search($presented[$alias], $parents)
-                    ]
+                fn($parent) => [
+                    strtolower($parent) => ['all' => $this->getParentData($parent)]
                 ],
                 $parents)
             ->toArray();
     }
 
-    protected function getParentData(string $parent, array $fields)
+    /**
+     * @get current data to view in form
+     */
+
+
+    protected function getParentData(string $parent)
     {
         $namespace = 'App\Models\\';
         return "{$namespace}{$parent}"::all()
-            ->pluck(implode(',', $fields))
+            ->pluck('name', 'id')
             ->toArray();
     }
 

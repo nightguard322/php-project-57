@@ -8,12 +8,11 @@
 </div>
 <div>
     {{ html()->label('Статус', 'status') }}
-    @php dd($User); @endphp
-    {{ html()->select('status_id', [$User['all']], $User['current']) }}
+    {{ html()->select('status_id', [$user['all']], $user['current']) }}
 </div>
 <div>
     {{ html()->label('Исполнитель', 'status') }}
-    {{ html()->select('assigned_to_id', [$User['all']], $User['current']) }}
+    {{ html()->select('assigned_to_id', [$taskstatus['all']], $taskstatus['current']) }}
 </div>
 
 

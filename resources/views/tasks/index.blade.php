@@ -3,7 +3,7 @@
         <x-header>Задачи</x-header>
             <a href="#">Статус</a>
             <a href="#">Автор</a>
-            <a href="#">Исполнтиель</a>
+            <a href="#">Исполнитель</a>
                 <x-blue-button :href="$entities['meta']['createRoute']">Применить</x-blue-button>
             </div>
             @auth
