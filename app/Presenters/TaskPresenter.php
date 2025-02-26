@@ -1,9 +1,13 @@
 <?php
 
 namespace App\Presenters;
+use App\Models\TaskStatus;
+use App\Models\User;
 
 class TaskPresenter extends BasePresenter
 {
+    
+
     public function present()
     {
         return 
@@ -48,6 +52,35 @@ class TaskPresenter extends BasePresenter
             parent::prepareMeta($headers),
             ['meta' => ['withLink' => 'name']
         ]);
+    }
+    /**
+     * @prepare parent models to view with an array
+     *
+     * @param [type] $presented
+     * @param array $parents
+     * @param string $field
+     * @return void
+     */
+    public function prepareParentData(array $presented, array $parents, array $fields): array
+    {
+        return collect($parents)
+            ->mapWithKeys(
+                fn($parent, $alias) => [
+                    $parent => [
+                        'all' => $this->getParentData($parent, $fields),
+                        'current' => array_search($presented[$alias], $parents)
+                    ]
+                ],
+                $parents)
+            ->toArray();
+    }
+
+    protected function getParentData(string $parent, array $fields)
+    {
+        $namespace = 'App\Models\\';
+        return "{$namespace}{$parent}"::all()
+            ->pluck(implode(',', $fields))
+            ->toArray();
     }
 
 }

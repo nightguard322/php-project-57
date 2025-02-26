@@ -9,7 +9,7 @@ class Task extends Model
     protected $casts = [
         'created_at' => 'datetime:d.m.Y',
     ];
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'description', 'status_id', 'assigned_to_id'];
     
     public function createdBy()
     {

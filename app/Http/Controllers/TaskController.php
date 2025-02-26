@@ -70,12 +70,29 @@ class TaskController extends Controller
      */
     public function edit(Task $task)
     {
-        $task = new TaskPresenter($task);
-        return view('tasks.edit', [
-            'task' => $task->present($task),
-            'links' => $task->getLinks(),
-            'users' => User::all()->pluck('name')->toArray()
-        ]);
+        $task = (new TaskPresenter($task));
+        $preparedTask = $task->present($task);
+        $preparedData = $task->prepareParentData(
+            $preparedTask,
+            ['assignedTo' => 'User', 'status' => 'TaskStatus'],
+            ['name', 'id']
+        );
+        return view('tasks.edit', array_merge([
+            'task' => $preparedTask,
+            'links' => $task->getLinks()
+        ], $preparedData));
+       
+
+
+        // $users = User::all()->pluck('name', 'id')->toArray();
+        // $statuses = TaskStatus::all()->pluck('name','id')->toArray();
+        // return view('tasks.edit', [
+        //     'task' => $preparedTask,
+        //     'links' => $task->getLinks(),
+        //     'users' => [
+        //         'all' => $users,
+        //         'current' => array_search($preparedTask['status'], $statuses)]
+        //     ]);
     }
 
     /**
@@ -89,7 +106,9 @@ class TaskController extends Controller
             'status_id' => 'required',
             'assigned_to_id' => 'nullable'
             ]);
-        $task->update($validated);
+        $task->fill($validated);
+        $task->save();
+        // dd($validated, $task);
         return redirect()->route('tasks.show', $task);
     }
 
