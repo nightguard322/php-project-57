@@ -3,11 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Task;
-use App\Models\TaskStatus;
-use App\Models\User;
+use App\Http\Helpers\BaseHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Resources\TaskResource;
 use App\Presenters\TaskPresenter;
 
 class TaskController extends Controller
@@ -21,7 +19,7 @@ class TaskController extends Controller
         $tasks = new TaskPresenter($task);
         return view('tasks.index', [
             'entities' => $tasks->presentCollection($tasks),
-            'links' => $tasks->getLinks($task)
+            'links' => BaseHelper::getLinks($task, ['edit', 'show'])
         ]);
     }
 
@@ -31,8 +29,7 @@ class TaskController extends Controller
     public function create()
     {
         $task = new Task();
-        $relatedModels = $task->prepareParentData(['User', 'TaskStatus']);
-        // $links = $task->getLinks($task);
+        $relatedModels = BaseHelper::prepareParentData(['User', 'TaskStatus']);
         return view('tasks.create', compact('task', 'relatedModels', 'links'));
     }
 

@@ -3,14 +3,17 @@
 namespace App\Presenters;
 
 use Illuminate\Support\Str;
-use Illuminate\Database\Eloquent\Collection;
-
+use FormHelper;
 
 abstract class BasePresenter
 {
-    protected $actions = ['edit', 'update', 'destroy', 'show'];
+    protected $data;
 
-    abstract public function present($model);
+    public function __construct($data)
+    {
+        $this->data = $data;
+    }
+    abstract public function present();
 
     /**
      * @get meta information with headers
@@ -18,6 +21,13 @@ abstract class BasePresenter
      * @param [type] $headers
      * @return array
      */
+    public function __get($name)
+    {
+        if ($name === 'data') {
+            return $this->data;
+        }
+        throw new \Exception("Property {$name} does not exists");
+    }
 
     public function prepareMeta(array $headers): array
     {
@@ -57,35 +67,11 @@ abstract class BasePresenter
             class_basename(static::class)
         );
     }
-    /**
-     * @prepare links for each route with default route list
-     * 
-     * @return array
-     */
 
-    public function getLinks($data): array
-    {
-        if ($data instanceof Collection) {
-            return $data->mapWithKeys(function ($element) {
-                return [$element->id => $this->getDefaultRoutes($element)];
-            })->toArray();
-        }
-        return $this->getDefaultRoutes($data);
-    }
 
-    /**
-     * Undocumented function
-     *
-     * @param mixed $entity
-     * @return void
-     */
-    protected function getDefaultRoutes(mixed $entity)
-    {
-        $routes =  array_map(
-            fn ($action) => route("tasks.{$action}", $entity->id), $this->actions
-        );
-        return array_combine($this->actions, $routes);
-    }
+
+
+
 
     protected function prepareCollection($collection, callable $fn)
     {
