@@ -29,8 +29,11 @@ class TaskController extends Controller
     public function create()
     {
         $task = new Task();
-        $relatedModels = BaseHelper::prepareParentData(['User', 'TaskStatus']);
-        return view('tasks.create', compact('task', 'relatedModels', 'links'));
+        return view('tasks.create', [
+            'task' => $task,
+            'relatedModels' => BaseHelper::prepareParentData(['User', 'TaskStatus']),
+            'links' => BaseHelper::getLinks($task, ['store'])
+        ]);
     }
 
     /**
@@ -66,15 +69,14 @@ class TaskController extends Controller
     {
         $task = new TaskPresenter($task);
         $preparedTask = $task->present($task);
-        $preparedData = $task->prepareParentData(
-            $preparedTask,
-            ['assignedTo' => 'User', 'status' => 'TaskStatus'],
-            ['name', 'id']
-        );
-        return view('tasks.edit', array_merge([
+        return view('tasks.edit', [
             'task' => $preparedTask,
-            'links' => $task->getLinks($task)
-        ], $preparedData));
+            'related' => BaseHelper::prepareParentData(
+                $preparedTask,
+                ['assignedTo' => 'User', 'status' => 'TaskStatus']
+            ),
+            'links' => BaseHelper::getLinks($task, ['edit'])
+        ]);
     }
 
     /**
