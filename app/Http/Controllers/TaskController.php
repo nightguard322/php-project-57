@@ -2,24 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Traits\dataFetcherTrait;
 use App\Models\Task;
-use App\Http\Helpers\BaseHelper;
+use App\Http\ViewModels\TaskViewModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Presenters\TaskPresenter;
 
 class TaskController extends Controller
 {
+    use dataFetcherTrait;
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $task = Task::with('status', 'createdBy', 'assignedTo')->get();
-        $tasks = new TaskPresenter($task);
+        $tasks = Task::with('status', 'createdBy', 'assignee')->get();
+        $taskViewModel = TaskViewModel::withCollection($tasks);
         return view('tasks.index', [
-            'entities' => $tasks->presentCollection($tasks),
-            'links' => BaseHelper::getLinks($task, ['edit', 'show'])
+            'entities' => $taskViewModel->present(),
+            'headers' => $taskViewModel->prepareHeaders(),
+            'links' => $taskViewModel->prepareLinks(['create', 'show', 'edit'])
         ]);
     }
 
@@ -29,11 +31,9 @@ class TaskController extends Controller
     public function create()
     {
         $task = new Task();
-        return view('tasks.create', [
-            'task' => $task,
-            'relatedModels' => BaseHelper::prepareParentData(['User', 'TaskStatus']),
-            'links' => BaseHelper::getLinks($task, ['store'])
-        ]);
+        $assignees= $this->fetchUsersFields();
+        $statuses = $this->fetchStatusesFields();
+        return view('tasks.create', compact('task', 'asignees', 'statuses'));
     }
 
     /**
@@ -59,7 +59,8 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-        return view('tasks.show', compact('task'));
+        $links = (new TaskViewModel($task))->prepareLinks('edit');
+        return view('tasks.show', compact('task', 'links'));
     }
 
     /**
@@ -67,16 +68,9 @@ class TaskController extends Controller
      */
     public function edit(Task $task)
     {
-        $task = new TaskPresenter($task);
-        $preparedTask = $task->present($task);
-        return view('tasks.edit', [
-            'task' => $preparedTask,
-            'related' => BaseHelper::prepareParentData(
-                $preparedTask,
-                ['assignedTo' => 'User', 'status' => 'TaskStatus']
-            ),
-            'links' => BaseHelper::getLinks($task, ['edit'])
-        ]);
+        $assignees= $this->fetchUsersFields();
+        $statuses = $this->fetchStatusesFields();
+        return view('tasks.create', compact('task', 'asignees', 'statuses'));
     }
 
     /**
@@ -92,7 +86,6 @@ class TaskController extends Controller
             ]);
         $task->fill($validated);
         $task->save();
-        // dd($validated, $task);
         return redirect()->route('tasks.show', $task);
     }
 

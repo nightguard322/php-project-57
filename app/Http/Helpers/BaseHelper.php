@@ -6,33 +6,6 @@ use Illuminate\Database\Eloquent\Collection;
 
 class BaseHelper
 {
-        /**
-     * @prepare parent models to view with an array
-     *
-     * @param array $parents
-     * @return array
-     */
-    public static function prepareParentData(array $parents): array
-    {
-        return collect($parents)
-            ->mapWithKeys(
-                fn($parent) => [
-                    strtolower($parent) => ['all' => static::getParentData($parent)]
-                ])
-            ->toArray();
-    }
-
-    /**
-     * @get current data to view in form
-     */
-
-    protected static function getParentData(string $parent)
-    {
-        $namespace = 'App\Models\\';
-        return "{$namespace}{$parent}"::all()
-            ->pluck('name', 'id')
-            ->toArray();
-    }
     /**
      * @prepare links for each route with default route list
      * 
@@ -57,12 +30,14 @@ class BaseHelper
     protected static function getDefaultRoutes(mixed $entity, mixed $actions)
     {
         $staticActions = ['create', 'store'];
+        $prepared = is_array($actions) ? $actions : [$actions];
         $prefix = strtolower(class_basename($entity)) . 's';
         $routes = array_map(fn ($action) => 
                 in_array($action, $staticActions)
                 ? route("{$prefix}.{$action}")
                 : route("{$prefix}.{$action}", $entity->id)
-            , array($actions));
+            , $prepared);
         return array_combine($actions, $routes);
     }
+
 }

@@ -1,9 +1,9 @@
-@props(['entities', 'links'])
+@props(['entities', 'headers', 'links'])
 
 <table class="mt-4">
     <thead class="border-b-2 border-solid border-black text-left">
         <tr>
-            @foreach($entities['meta']['headers'] as $header)
+            @foreach($headers as $header)
                 <th>{{ $header }}</th>
             @endforeach
             @Auth
@@ -12,11 +12,10 @@
         </tr>
     </thead>
     <tbody>
-        @foreach($entities['data'] as $row)
-            
+        @foreach($entities as $row)
             <tr>
                 @foreach($row as $key => $cell)
-                    @if ($key === $entities['meta']['withLink'])
+                    @if ($key === 'link')
                         <td>
                             <a href="{{ $links[$row['id']]['show'] }}">{{ $cell }}</a>
                         </td>
@@ -26,7 +25,7 @@
                 @endforeach
                 @Auth
                     <td>
-                        <a class="text-blue-600 hover:text-blue-900" href="{{ $links[$row['id']]['edit'] }}">Изменить</a>
+                        <a class="text-blue-600 hover:text-blue-900" href="{{ $links[$row['id']['edit']] }}">Изменить</a>
                     </td>
                 @endAuth
             </tr>

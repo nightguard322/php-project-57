@@ -8,11 +8,11 @@
 </div>
 <div>
     {{ html()->label('Статус', 'status') }}
-    {{ html()->select('status_id', [$user['all']], $user['current']) }}
+    {{ html()->select('status_id', $statuses, $task->status->name) }}
 </div>
 <div>
     {{ html()->label('Исполнитель', 'status') }}
-    {{ html()->select('assigned_to_id', [$taskstatus['all']], $taskstatus['current']) }}
+    {{ html()->select('assigned_to_id', $users, $task->assignee->name) }}
 </div>
 
 

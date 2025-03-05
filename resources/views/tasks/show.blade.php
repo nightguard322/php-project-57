@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-header>Просмотр задачи: {{ $task->name }}
-        <a href="{{ route('tasks.edit', $task) }}">⚙</a>
+        <a href="{{ $links[$task->id]['edit'] }}">⚙</a>
     </x-header>
     <div>
         <p>Имя: {{ $task->name }}</p>

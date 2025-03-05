@@ -4,13 +4,13 @@
             <a href="#">Статус</a>
             <a href="#">Автор</a>
             <a href="#">Исполнитель</a>
-                <x-blue-button :href="$entities['meta']['createRoute']">Применить</x-blue-button>
+                <x-blue-button :href="route('tasks.create')">Применить</x-blue-button>
             </div>
             @auth
                 <div>
-                    <x-blue-button :href="$entities['meta']['createRoute']">Создать задачу</x-blue-button>
+                    <x-blue-button :href="route('tasks.create')">Создать задачу</x-blue-button>
                 </div>
             @endauth
-            <x-table-main :entities="$entities" :links="$links"/>
+            <x-table-main :entities="$entities" :headers="$headers" :links="$links"/>
     </div>
 </x-app-layout>
