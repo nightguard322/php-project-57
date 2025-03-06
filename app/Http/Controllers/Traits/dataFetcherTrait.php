@@ -9,12 +9,12 @@ Trait dataFetcherTrait
 {
     public function fetchUsersFields()
     {
-        return User::all()->pluck('id', 'name')->toArray();
+        return User::all()->pluck('id', 'name');
     }
 
     public function fetchStatusesFields()
     {
-        return TaskStatus::all()->pluck('id', 'name')->toArray();
+        return TaskStatus::all()->pluck('id', 'name');
     }
 
     // public function prepareFormData()

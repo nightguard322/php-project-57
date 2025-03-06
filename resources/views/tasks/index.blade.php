@@ -11,6 +11,6 @@
                     <x-blue-button :href="route('tasks.create')">Создать задачу</x-blue-button>
                 </div>
             @endauth
-            <x-table-main :entities="$entities" :headers="$headers" :links="$links"/>
+            <x-table-main :entities="$preparedTask"/>
     </div>
 </x-app-layout>

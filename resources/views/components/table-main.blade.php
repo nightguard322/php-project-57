@@ -3,7 +3,7 @@
 <table class="mt-4">
     <thead class="border-b-2 border-solid border-black text-left">
         <tr>
-            @foreach($headers as $header)
+            @foreach($entities->preparedHeaders as $header)
                 <th>{{ $header }}</th>
             @endforeach
             @Auth
@@ -12,7 +12,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach($entities as $row)
+        @foreach($entities->collection as $row)
             <tr>
                 @foreach($row as $key => $cell)
                     @if ($key === 'link')

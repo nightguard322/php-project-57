@@ -17,12 +17,9 @@ class TaskController extends Controller
     public function index()
     {
         $tasks = Task::with('status', 'createdBy', 'assignee')->get();
-        $taskViewModel = TaskViewModel::withCollection($tasks);
-        return view('tasks.index', [
-            'entities' => $taskViewModel->present(),
-            'headers' => $taskViewModel->prepareHeaders(),
-            'links' => $taskViewModel->prepareLinks(['create', 'show', 'edit'])
-        ]);
+        $preparedTask = TaskViewModel::prepareCollection($tasks);
+        $preparedTask->prepareHeaders()->prepareLinks(['create', 'show', 'edit']);
+        return view('tasks.index', compact('preparedTask'));
     }
 
     /**
@@ -30,10 +27,10 @@ class TaskController extends Controller
      */
     public function create()
     {
-        $task = new Task();
         $assignees= $this->fetchUsersFields();
         $statuses = $this->fetchStatusesFields();
-        return view('tasks.create', compact('task', 'asignees', 'statuses'));
+        $preparedTask = TaskViewModel::prepareModel(new Task(), $assignees, $statuses);
+        return view('tasks.create', compact('preparedTask'));
     }
 
     /**
@@ -59,8 +56,9 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-        $links = (new TaskViewModel($task))->prepareLinks('edit');
-        return view('tasks.show', compact('task', 'links'));
+        $preparedTask = TaskViewModel::prepareModel(new Task());
+        $preparedTask->prepareLinks('edit');
+        return view('tasks.show', compact('preparedTask'));
     }
 
     /**
@@ -70,7 +68,8 @@ class TaskController extends Controller
     {
         $assignees= $this->fetchUsersFields();
         $statuses = $this->fetchStatusesFields();
-        return view('tasks.create', compact('task', 'asignees', 'statuses'));
+        $preparedTask = TaskViewModel::prepareModel($task, $assignees, $statuses);
+        return view('tasks.create', compact('preparedTask'));
     }
 
     /**

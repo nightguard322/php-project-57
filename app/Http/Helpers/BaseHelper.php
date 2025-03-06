@@ -3,6 +3,8 @@
 namespace App\Http\Helpers;
 
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class BaseHelper
 {
@@ -11,6 +13,9 @@ class BaseHelper
      * 
      * @return array
      */
+    private static array $commonRoutes = ['index', 'create', 'store'];
+    private static array $dynamicRoutes = ['show', 'edit', 'delete'];
+
     public static function getLinks($data, $actions)
     {
             if ($data instanceof Collection) {
@@ -27,17 +32,60 @@ class BaseHelper
      * @param mixed $entity
      * @return void
      */
-    protected static function getDefaultRoutes(mixed $entity, mixed $actions)
+    public static function getDefaultRoutes(Model $entity, mixed $actions)
     {
-        $staticActions = ['create', 'store'];
         $prepared = is_array($actions) ? $actions : [$actions];
-        $prefix = strtolower(class_basename($entity)) . 's';
-        $routes = array_map(fn ($action) => 
-                in_array($action, $staticActions)
-                ? route("{$prefix}.{$action}")
-                : route("{$prefix}.{$action}", $entity->id)
-            , $prepared);
-        return array_combine($actions, $routes);
+        $prefix = self::getPrefix($entity);
+        return collect($prepared)
+            ->mapWithKeys(function ($action) use ($prefix, $entity) {
+                if (in_array($action, self::$commonRoutes)) {
+                    return [$action => route("{$prefix}.{$action}")];
+                } 
+                if (in_array($action, self::$dynamicRoutes)) {
+                    if (!$entity->exists) {
+                        throw new \LogicException("Dynamic route {$action} requirs persistent model");
+                    }
+                    return [$action => route("{$prefix}.{$action}", $entity->id)];
+                }
+                throw new \InvalidArgumentException("Wrong route name - $action");
+            })
+            ->toArray();
+    }
+
+    public static function getStaticRoutes($entity)
+    {
+        $prefix = self::getPrefix($entity);
+        return collect(self::$commonRoutes)
+            ->mapWithKeys(function ($action) use ($prefix) {
+                if (in_array($action, self::$commonRoutes)) {
+                    return [$action => route("{$prefix}.{$action}")];
+                }
+                throw new \InvalidArgumentException("Wrong route name - $action");
+            })
+            ->toArray();
+    }
+
+    private static function getPrefix($entity)
+    {
+        return Str::plural(
+            Str::snake(class_basename($entity))
+        );
+    }
+    /**
+     *  Запрос на построение ссылок
+     * Если статика - идут в свойство статики
+     * если динамика - в динамику модели или через map
+     * 
+     * 
+     */
+
+    public static function getClassName($class): string
+    {
+        $basename = class_basename($class::class);
+        return Str::of($basename) 
+            ->replace('Service', '')
+            ->snake()
+            ->lower();
     }
 
 }

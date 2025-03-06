@@ -9,8 +9,8 @@ use App\Models\Task;
 
 class TaskViewModel
 {
-    protected ?Collection $tasks;
-    protected ?Task $task;
+    protected ?Collection $collection;
+    protected ?Task $model;
     protected array $headers = [
         'id',
         'status',
@@ -19,27 +19,29 @@ class TaskViewModel
         'assignee',
         'created_at'
 ];
+    protected $preparedHeaders;
     public readonly array $asignees;
     public readonly ?int $selectedAsignee;
     public readonly array $statuses;
     public readonly ?int $selectedStatus;
     protected string $className = 'tasks';
+    protected $links;
 
-    public static function withCollection(Collection $tasks)
+    public static function prepareCollection(Collection $collection)
     {
-        $instanse = new self($tasks);
-        $instanse->tasks = $tasks;
+        $instanse = new self($collection);
+        $instanse->collection = $collection;
         return $instanse;
     }
 
-    public static function withModel(Task $task, Collection $asignees, Collection $statuses): self
+    public static function prepareModel(Task $model, ?Collection $asignees = null, ?Collection $statuses = null): self
     {
-        $instanse = new self($task);
-        $instanse->task = $task;
+        $instanse = new self($model);
+        $instanse->model = $model;
         $instanse->asignees = $asignees->toArray();
-        $instanse->selectedAsignee = array_search($task->assignee->name, $asignees->toArray());
+        $instanse->selectedAsignee = array_search($model->assignee->name, $asignees->toArray());
         $instanse->statuses = $statuses->toArray();
-        $$instanse->selectedStatus = array_search($task->status->name, $statuses->toArray());
+        $$instanse->selectedStatus = array_search($model->status->name, $statuses->toArray());
         return $instanse;
     }
 
@@ -47,18 +49,18 @@ class TaskViewModel
     {
         return 
         [
-            'id' => $this->task->id,
-            'status' => $this->task->status->name,
-            'link' => $this->task->name,
-            'createdBy' => $this->task->createdBy->name,
-            'assignedTo' => $this->task->assignedTo->name ?? null,
-            'createdAt' => $this->task->created_at->format('d-m-Y')
+            'id' => $this->model->id,
+            'status' => $this->model->status->name,
+            'link' => $this->model->name,
+            'createdBy' => $this->model->createdBy->name,
+            'assignedTo' => $this->model->assignedTo->name ?? null,
+            'createdAt' => $this->model->created_at->format('d-m-Y')
         ];
     }
 
     public function presentCollection()
     {
-        return collect($this->tasks)
+        return collect($this->collection)
             ->map(fn($element) => $this->present($element));
     }
 
@@ -66,43 +68,32 @@ class TaskViewModel
      * @Prepare headers for view with translations
      *
      * @param [array] $headers
-     * @return array
+     * @return self
      */
-    public function prepareHeaders(): array
+    public function prepareHeaders(?array $headers = null): self
     {
-        return collect($this->headers)
+        $className = BaseHelper::getClassName($this);
+        $this->preparedHeaders = collect($headers ?? $this->headers)
             ->mapWithKeys(
-                fn($header) => [$header => __("{$this->className}.{$header}")]
+                fn($header) => [$header => __("{$className}.{$header}")]
             )
             ->toArray();
+        return $this;
     }
 
-    /**
-     * @get Classname without namespace
-     *
-     * @return string
-     */
-    protected function getClassName(): string
+    public function prepareLinks(string|array $actions): self
     {
-        return Str::replace(
-            'Service',
-            '',
-            class_basename(static::class)
-        );
+        $this->links = BaseHelper::getLinks($this->model, $actions);
+        return $this;
     }
 
-    public function prepareLinks($actions)
-    {
-        return BaseHelper::getLinks($this->tasks, $actions);
-    }
-
-    public function getFormData(array $parents)
+    public function getFormData(array $parents): Collection
     {
         return collect($parents)
             ->mapWithKeys(fn($parent, $name) => [
                 $name => [
                     'values' => $parent,
-                    'current' => array_search($this->tasks->$name, $parent->toArray())
+                    'current' => array_search($this->collection->$name, $parent->toArray())
                 ]
             ]);
     }
