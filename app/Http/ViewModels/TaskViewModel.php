@@ -9,17 +9,7 @@ use App\Models\Task;
 
 class TaskViewModel
 {
-    protected ?Collection $collection;
     protected ?Task $model;
-    protected array $headers = [
-        'id',
-        'status',
-        'name',
-        'createdBy',
-        'assignee',
-        'created_at'
-];
-    protected $preparedHeaders;
     public readonly array $asignees;
     public readonly ?int $selectedAsignee;
     public readonly array $statuses;
@@ -27,13 +17,9 @@ class TaskViewModel
     protected string $className = 'tasks';
     protected $links;
 
-    public static function prepareCollection(Collection $collection)
-    {
-        $instanse = new self($collection);
-        $instanse->collection = $collection;
-        return $instanse;
-    }
-
+    /**
+     * @param Task $model
+     */
     public static function prepareModel(Task $model, ?Collection $asignees = null, ?Collection $statuses = null): self
     {
         $instanse = new self($model);
@@ -58,28 +44,12 @@ class TaskViewModel
         ];
     }
 
-    public function presentCollection()
-    {
-        return collect($this->collection)
-            ->map(fn($element) => $this->present($element));
-    }
-
     /**
      * @Prepare headers for view with translations
      *
      * @param [array] $headers
      * @return self
      */
-    public function prepareHeaders(?array $headers = null): self
-    {
-        $className = BaseHelper::getClassName($this);
-        $this->preparedHeaders = collect($headers ?? $this->headers)
-            ->mapWithKeys(
-                fn($header) => [$header => __("{$className}.{$header}")]
-            )
-            ->toArray();
-        return $this;
-    }
 
     public function prepareLinks(string|array $actions): self
     {
@@ -96,5 +66,15 @@ class TaskViewModel
                     'current' => array_search($this->collection->$name, $parent->toArray())
                 ]
             ]);
+    }
+
+    public function getModel()
+    {
+        return $this->model;
+    }
+
+    public function setLinks(array $links): void
+    {
+        $this->links = $links;
     }
 }

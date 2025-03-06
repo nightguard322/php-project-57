@@ -15,39 +15,30 @@ class BaseHelper
      */
     private static array $commonRoutes = ['index', 'create', 'store'];
     private static array $dynamicRoutes = ['show', 'edit', 'delete'];
-
-    public static function getLinks($data, $actions)
-    {
-            if ($data instanceof Collection) {
-                return $data->mapWithKeys(function ($element) use ($actions) {
-                    return [$element->id => static::getDefaultRoutes($element, $actions)];
-                })->toArray();
-            }
-            return static::getDefaultRoutes($data, $actions);
-    }
     
     /**
      * Prepare default routes with entity id
      *
      * @param mixed $entity
-     * @return void
+     * @return array
      */
-    public static function getDefaultRoutes(Model $entity, mixed $actions)
-    {
-        $prepared = is_array($actions) ? $actions : [$actions];
-        $prefix = self::getPrefix($entity);
-        return collect($prepared)
-            ->mapWithKeys(function ($action) use ($prefix, $entity) {
-                if (in_array($action, self::$dynamicRoutes)) {
-                    if (!$entity->exists) {
-                        throw new \LogicException("Dynamic route {$action} requirs persistent model");
-                    }
-                    return [$action => route("{$prefix}.{$action}", $entity->id)];
-                }
+    public static function getDynamicRoutes(Model $entity, mixed $actions): array
+{
+    $prepared = is_array($actions) ? $actions : [$actions];
+    $prefix = self::getPrefix($entity);
+
+    return collect($prepared)
+        ->mapWithKeys(function ($action) use ($prefix, $entity) {
+            if (!in_array($action, self::$dynamicRoutes)) {
                 throw new \InvalidArgumentException("Wrong route name - $action");
-            })
-            ->toArray();
-    }
+            }
+            if (!$entity->exists) {
+                throw new \LogicException("Dynamic route {$action} requires persistent model");
+            }
+            return [$action => route("{$prefix}.{$action}", $entity->id)];
+        })
+        ->toArray();
+}
 
     public static function getStaticRoutes($entity)
     {
