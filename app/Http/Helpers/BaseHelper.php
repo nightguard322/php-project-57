@@ -38,9 +38,6 @@ class BaseHelper
         $prefix = self::getPrefix($entity);
         return collect($prepared)
             ->mapWithKeys(function ($action) use ($prefix, $entity) {
-                if (in_array($action, self::$commonRoutes)) {
-                    return [$action => route("{$prefix}.{$action}")];
-                } 
                 if (in_array($action, self::$dynamicRoutes)) {
                     if (!$entity->exists) {
                         throw new \LogicException("Dynamic route {$action} requirs persistent model");
