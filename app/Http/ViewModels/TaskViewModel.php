@@ -53,19 +53,8 @@ class TaskViewModel
 
     public function prepareLinks(string|array $actions): self
     {
-        $this->links = BaseHelper::getLinks($this->model, $actions);
+        $this->links = BaseHelper::getDynamicRoutes($this->model, $actions);
         return $this;
-    }
-
-    public function getFormData(array $parents): Collection
-    {
-        return collect($parents)
-            ->mapWithKeys(fn($parent, $name) => [
-                $name => [
-                    'values' => $parent,
-                    'current' => array_search($this->collection->$name, $parent->toArray())
-                ]
-            ]);
     }
 
     public function getModel()

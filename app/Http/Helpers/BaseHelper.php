@@ -22,35 +22,35 @@ class BaseHelper
      * @param mixed $entity
      * @return array
      */
-    public static function getDynamicRoutes(Model $entity, mixed $actions): array
-{
-    $prepared = is_array($actions) ? $actions : [$actions];
-    $prefix = self::getPrefix($entity);
 
-    return collect($prepared)
-        ->mapWithKeys(function ($action) use ($prefix, $entity) {
-            if (!in_array($action, self::$dynamicRoutes)) {
-                throw new \InvalidArgumentException("Wrong route name - $action");
-            }
-            if (!$entity->exists) {
-                throw new \LogicException("Dynamic route {$action} requires persistent model");
-            }
-            return [$action => route("{$prefix}.{$action}", $entity->id)];
-        })
-        ->toArray();
-}
-
-    public static function getStaticRoutes($entity)
+    public static function getStaticRoutes(Collection $collection, array $actions)
     {
-        $prefix = self::getPrefix($entity);
-        return collect(self::$commonRoutes)
-            ->mapWithKeys(function ($action) use ($prefix) {
-                if (in_array($action, self::$commonRoutes)) {
-                    return [$action => route("{$prefix}.{$action}")];
-                }
-                throw new \InvalidArgumentException("Wrong route name - $action");
-            })
-            ->toArray();
+        return collect($actions)
+        ->mapWithKeys(fn($action) => [
+            $action => route("{self::getPrefix($collection)}.{$action}")
+        ])
+        ->toArray(); 
+    }
+
+    public static function getDynamicRoutes(Model $entity, array $actions)
+    {
+        return collect($actions)
+            ->mapWithKeys(fn($action) => 
+                $entity->exists 
+                ? [$action => route("{self::getPrefix($entity)}.{$action}", $entity->id)]
+                : throw new \LogicException("Dynamic route {$action} requires persistent model")
+            )
+            ->toArray(); 
+    }
+
+
+    public static function checkRoute($actions)
+    {
+        $prepared = is_array($actions) ? $actions : [$actions];
+        return [
+            'static' => array_intersect($prepared, self::$commonRoutes),
+            'dynamic' => array_intersect($prepared, static::$dynamicRoutes)
+        ];
     }
 
     private static function getPrefix($entity)

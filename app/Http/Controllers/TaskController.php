@@ -7,6 +7,7 @@ use App\Models\Task;
 use App\Http\ViewModels\TaskViewModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\ViewModels\TaskCollectionViewModel;
 
 class TaskController extends Controller
 {
@@ -17,7 +18,7 @@ class TaskController extends Controller
     public function index()
     {
         $tasks = Task::with('status', 'createdBy', 'assignee')->get();
-        $preparedTask = TaskViewModel::prepareCollection($tasks);
+        $preparedTask = TaskCollectionViewModel::prepareCollection($tasks);
         $preparedTask->prepareHeaders()->prepareLinks(['create', 'show', 'edit']);
         return view('tasks.index', compact('preparedTask'));
     }

@@ -55,12 +55,14 @@ class TaskCollectionViewModel
 
     public function prepareLinks(string|array $actions): self
     {
-            collect($this->collection)
-                ->each(function(Task $element) use ($actions) {
-                    $viewModel = TaskViewModel::prepareModel($element);
-                    $links = BaseHelper::getDynamicRoutes($viewModel->getModel(), $actions);
-                    $viewModel->setLinks($links);
-                });
+        $preparedActions = BaseHelper::checkRoute($actions);
+        $this->links = BaseHelper::getStaticRoutes($this->collection, $preparedActions['static']);
+
+        $this->collection = $this->collection->map(function(Task $element) use ($preparedActions) {
+                $viewModel = TaskViewModel::prepareModel($element);
+                $links = BaseHelper::getDynamicRoutes($viewModel->getModel(), $preparedActions['dynamic']);
+                $viewModel->setLinks($links);
+            });
         return $this;
     }
 
